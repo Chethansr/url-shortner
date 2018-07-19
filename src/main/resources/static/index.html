@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Demo</title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <base href="/"/>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-sm-6">
+            <span>URL:</span><input type="url" class="form-control" id="url" name="url">
+        </div>
+        <div class="col-sm-6" style="padding-top:2%">
+            <button type="button" class="btn btn-primary" id="shorten">Shorten</button>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-sm-6">
+            <span>Short URL:</span><input type="url" class="form-control" id="min-url" name="url">
+        </div>
+        <div class="col-sm-6" style="padding-top:2%">
+            <button type="button" class="btn btn-primary" id="redirect">Redirect</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+    $('#shorten').click(function() {
+        url = $('#url').val()
+        if (url != '') {
+            req = {};
+            req.url = url;
+            $.ajax({
+                url: '/shorten',
+                type: "POST",
+                data: JSON.stringify(req),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                dataType: "json",
+                success: function (data) {
+                    $('#min-url').val(data.shortened_url);
+                }
+            });
+        } else {
+            alert('Please enter a URL');
+        }
+    });
+
+    $('#redirect').click(function() {
+        url = $('#min-url').val()
+        if (url != '') {
+            req = {};
+            req.shortened_url = url;
+            $.ajax({
+                url: '/redirect',
+                type: "POST",
+                data: JSON.stringify(req),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                dataType: "json",
+                success: function (data) {
+                    window.open(data.url);
+                }
+            });
+        } else {
+            alert('Please enter a URL');
+        }
+    });
+
+</script>
+</html>
